@@ -55,7 +55,7 @@ while True:
 		
 		if action=="connect":
 			username=socket_clients.recv()
-			personaje=socket_clients.recv()
+			personaje=json.loads(socket_clients.recv())
 			dic={"username":username,"direc":4,"x":pos_init_x,"y":pos_init_y,"fondo":1,"personaje":personaje}
 			gamer=Player(id_client,len(players)+1,dic)
 			players.append(gamer)

@@ -4,6 +4,117 @@ import zmq
 import math
 import json
 
+
+class Cursor(pygame.Rect):
+    def __init__(self):
+        pygame.Rect.__init__(self,0,0,1,1)
+    def posicion(self):
+        self.left,self.top=pygame.mouse.get_pos()
+
+class Boton(pygame.sprite.Sprite):
+    def __init__(self,imagen1, imagen2,x,y):
+        self.imagen_normal= imagen1
+        self.imagen_seleccion= imagen2
+        self.imagen_actual=self.imagen_normal
+        self.rect=self.imagen_actual.get_rect()
+        self.rect.left,self.rect.top=x,y
+
+    def accion(self,pantalla,cursor):
+        if cursor.colliderect(self.rect):
+            self.imagen_actual= self.imagen_seleccion
+        else:
+            self.imagen_actual=self.imagen_normal
+        pantalla.blit(self.imagen_actual,self.rect)
+
+
+
+    
+
+def seleccionar_personaje(cursor):
+    fondo=pygame.image.load("objetos/seleccion.png")
+    img1=pygame.image.load("objetos/pj1.png")
+    img2=pygame.image.load("objetos/pj2.png")
+    img3=pygame.image.load("objetos/pj3.png")
+    seleccionar1= pygame.image.load("objetos/botones/3.png")
+    seleccionar12= pygame.image.load("objetos/botones/3.3.png")
+    seleccionar2= pygame.image.load("objetos/botones/3.png")
+    seleccionar22= pygame.image.load("objetos/botones/3.3.png")
+    seleccionar3= pygame.image.load("objetos/botones/3.png")
+    seleccionar32= pygame.image.load("objetos/botones/3.3.png")
+    salir1= pygame.image.load("objetos/botones/2.png")
+    salir2= pygame.image.load("objetos/botones/2.2.png")
+    boton1= Boton(seleccionar1,seleccionar12,160,450)
+    boton2= Boton(seleccionar2,seleccionar22,396,450)
+    boton3= Boton(seleccionar3,seleccionar32,630,450)
+    boton6= Boton(salir1,salir2,800,550)
+
+    cerrar= False
+
+    while not cerrar:
+        tecla= pygame.key.get_pressed()
+        for event in pygame.event.get():
+            if event.type==QUIT:
+                cerrar=True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if cursor.colliderect(boton1.rect):
+                    pygame.mixer.music.stop()
+                    Game(2)
+                elif cursor.colliderect(boton2.rect):
+                    pygame.mixer.music.stop()
+                    Game(0)
+                elif cursor.colliderect(boton3.rect):
+                    pygame.mixer.music.stop()
+                    Game(1)
+                if cursor.colliderect(boton6.rect):
+                    cerrar=True
+                
+        cursor.posicion()
+        PANTALLA.blit(fondo,(0,0))
+        PANTALLA.blit(img1,(110,150))
+        PANTALLA.blit(img2,(346,150))
+        PANTALLA.blit(img3,(582,150))
+        boton1.accion(PANTALLA,cursor)
+        boton2.accion(PANTALLA,cursor)
+        boton3.accion(PANTALLA,cursor)
+        boton6.accion(PANTALLA,cursor)
+        pygame.display.flip()
+
+    ##pygame.quit()
+
+
+
+def inicio():
+    fondo=pygame.image.load("objetos/inicio.png")
+    jugar1= pygame.image.load("objetos/botones/1.png")
+    jugar2= pygame.image.load("objetos/botones/1.1.png")
+    salir1= pygame.image.load("objetos/botones/2.png")
+    salir2= pygame.image.load("objetos/botones/2.2.png")
+    cursor= Cursor()
+    boton1= Boton(jugar1,jugar2,700,100)
+    boton2= Boton(salir1,salir2,700,200)
+
+    cerrar= False
+
+    while not cerrar:
+        tecla= pygame.key.get_pressed()
+        for event in pygame.event.get():
+            if event.type==QUIT:
+                cerrar=True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if cursor.colliderect(boton1.rect):
+                    seleccionar_personaje(cursor)
+                if cursor.colliderect(boton2.rect):
+                    cerrar=True
+                
+        cursor.posicion()
+        PANTALLA.blit(fondo,(0,0))
+        boton1.accion(PANTALLA,cursor)
+        boton2.accion(PANTALLA,cursor)
+        pygame.display.flip()
+    ##pygame.quit()
+    
+
+
 class Objetosinvi (pygame.sprite.Sprite):
     def __init__(self,x,y,objeto):
         pygame.sprite.Sprite.__init__(self)
@@ -226,8 +337,8 @@ class Jugador(pygame.sprite.Sprite):
          self.rect.x=self.x
          self.rect.y=self.y
          self.image=self.Pj
-         dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":0,"vida":self.vida,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":carpeta,"bandera":True}         
-         socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
+         #dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":0,"vida":self.vida,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":carpeta,"bandera":True}         
+         #socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
 
     def interfase(self):
          propiedades= pygame.sprite.Group()
@@ -290,7 +401,7 @@ class Enemigo(pygame.sprite.Sprite):
         self.yaux=y
         self.i=1
         self.direc=direc
-        self.pasos=8
+        self.pasos=5
         self.dano=dano
 
         if(direc==4):
@@ -626,7 +737,7 @@ class AnimacionMapa (pygame.sprite.Sprite):
          retornar.remove(nombre_vida_mana)
          return retornar
 
-def manejo_mapas(player,x,y,fondo_aux,socket_server):
+def manejo_mapas(fondo,player,x,y,fondo_aux,socket_server):
     fondo.Cambiomapa(-330,0,fondo_aux)
     player.x=x
     player.y=y
@@ -643,7 +754,7 @@ def Metamorfosis(player,personaje,dano,gastarmana):
 
 def from_server(action,player,username,dic1): 
 	if  dic1["bandera"]:
-		if id_player != username:
+		if player.nombre != username:
 			if(dic1["i"] <= 10):  
 				player.i=dic1["i"]
 			else:
@@ -672,7 +783,7 @@ def from_server(action,player,username,dic1):
 
 
 #_________________________________________INICIO DEL JUEGO_______________________________________
-if __name__=="__main__":
+def Game(n):
 
   init =False
   players={}
@@ -683,7 +794,7 @@ if __name__=="__main__":
 
   msg="connect"
   username=sys.argv[1]
-  socket_server.send_multipart([msg,username,sys.argv[2]])
+  socket_server.send_multipart([msg,username,json.dumps(n,sort_keys=True)])
 
   poller = zmq.Poller()
   poller.register(socket_server, zmq.POLLIN)
@@ -985,28 +1096,28 @@ if __name__=="__main__":
       p=players[username]
       if(p.x>1000 or p.x<0 or p.y<0 or  p.y>0 ):
         if(1==p.fondo and p.y>ALTO):
-          manejo_mapas(p,500,0,2,socket_server)
+          manejo_mapas(fondo,p,500,0,2,socket_server)
           
         if(2==p.fondo and p.y<-20):
-          manejo_mapas(p,250,700,1,socket_server)
+          manejo_mapas(fondo,p,250,700,1,socket_server)
          
         if(1==p.fondo and p.x<0):
-          manejo_mapas(p,1000,p.y,3,socket_server)
+          manejo_mapas(fondo,p,1000,p.y,3,socket_server)
 
         if(3==p.fondo and p.x>ANCHO):
-          manejo_mapas(p,0,p.y,1,socket_server)
+          manejo_mapas(fondo,p,0,p.y,1,socket_server)
           
         if(1==p.fondo and p.y<0):
-          manejo_mapas(p,p.x,680,4,socket_server)
+          manejo_mapas(fondo,p,p.x,680,4,socket_server)
 
         if(4==p.fondo and p.y>700):
-          manejo_mapas(p,p.x,20,1,socket_server)
+          manejo_mapas(fondo,p,p.x,20,1,socket_server)
 
         if(2==p.fondo and p.y>700):
-          manejo_mapas(p,p.x,0,5,socket_server)
+          manejo_mapas(fondo,p,p.x,0,5,socket_server)
 
         if(5==p.fondo and p.y<0):
-          manejo_mapas(p,p.x,700,2,socket_server)
+          manejo_mapas(fondo,p,p.x,700,2,socket_server)
 
 
         for iterador,p in players.iteritems():
@@ -1032,4 +1143,12 @@ if __name__=="__main__":
   pygame.quit()
     
 
+if __name__=="__main__":
+ ALTO= 640
+ ANCHO= 1000
 
+ pygame.init()
+
+ PANTALLA= pygame.display.set_mode([ANCHO,ALTO])
+ pygame.key.set_repeat(100,10)
+ inicio()
