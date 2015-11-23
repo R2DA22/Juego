@@ -3,6 +3,7 @@ from pygame.locals import *
 import zmq
 import math
 import json
+import GIFImage
 
 
 class Cursor(pygame.Rect):
@@ -79,7 +80,7 @@ def seleccionar_personaje(cursor):
         boton6.accion(PANTALLA,cursor)
         pygame.display.flip()
 
-    ##pygame.quit()
+    pygame.quit()
 
 
 
@@ -111,7 +112,7 @@ def inicio():
         boton1.accion(PANTALLA,cursor)
         boton2.accion(PANTALLA,cursor)
         pygame.display.flip()
-    ##pygame.quit()
+    pygame.quit()
     
 
 
@@ -795,7 +796,6 @@ def Game(n):
   msg="connect"
   username=sys.argv[1]
   socket_server.send_multipart([msg,username,json.dumps(n,sort_keys=True)])
-
   poller = zmq.Poller()
   poller.register(socket_server, zmq.POLLIN)
   ANCHO = int(1000)
@@ -807,9 +807,19 @@ def Game(n):
   mapeo= pygame.sprite.Group()
   jugadores= pygame.sprite.Group()
   nombre_vida_manajugador= pygame.sprite.Group()
-  terminar= False 
-
+  terminar= False
+  fondo=pygame.image.load("fondos/fondoEspera.png")
+  c = GIFImage.GIFImage("fondos/buscando.gif")
+  PANTALLA.blit(fondo,(0,0))
   while not terminar:
+    
+    if not init:
+     for event in pygame.event.get():
+           if event.type == QUIT:
+                pygame.quit()
+                return
+     c.render(PANTALLA, (350, 200))
+     pygame.display.flip()
     socks = dict(poller.poll(1))
     if socket_server in socks and socks[socket_server] == zmq.POLLIN:
       j=0
