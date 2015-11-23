@@ -683,7 +683,7 @@ if __name__=="__main__":
 
   msg="connect"
   username=sys.argv[1]
-  socket_server.send_multipart([msg,username])
+  socket_server.send_multipart([msg,username,sys.argv[2]])
 
   poller = zmq.Poller()
   poller.register(socket_server, zmq.POLLIN)
@@ -724,7 +724,7 @@ if __name__=="__main__":
 
           #__________________ENEMIGOS
 
-          enemigo=Enemigo("Ronal",8,200,400,100,100,100,1,100,100,0)
+          enemigo=Enemigo("Ronal",8,200,400,100,100,250,1,100,100,0)
           enemigos.add(enemigo)
           mapeo.add(enemigos)
 
