@@ -338,8 +338,8 @@ class Jugador(pygame.sprite.Sprite):
          self.rect.x=self.x
          self.rect.y=self.y
          self.image=self.Pj
-         #dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":0,"vida":self.vida,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":carpeta,"bandera":True}         
-         #socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
+         dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":0,"vida":self.vida,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":carpeta,"bandera":True}         
+         socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
 
     def interfase(self):
          propiedades= pygame.sprite.Group()
@@ -673,15 +673,17 @@ class AnimacionMapa (pygame.sprite.Sprite):
        #CARGAR ELEMENTOS DEL MAPA EN CUESTION
         retornar.add(objetos)     
         retornar.add(enemigos)
-        bandera2=1
+        
         aux=0
         iterador=0
         index=0
-        bandera=0
+        
        #INTERFAS VIDA MANA NOMBRE
         for col in enemigos:
             nombre_vida_mana.add(col.interfase())
             retornar.add(nombre_vida_mana)
+            bandera=0
+            bandera2=1
         #SI SE DESTRUYE UN ENEMIGO SAQUELO DE LISTA ENEMIGOS LISTA MAPA Y QUITE LA INTERFAS
             if(col.vida<=0):
                 retornar.remove(col)
@@ -747,9 +749,9 @@ def manejo_mapas(fondo,player,x,y,fondo_aux,socket_server):
     dic={"mapa":fondo_aux,"username":player.nombre,"bandera":False}
     socket_server.send_multipart(["mapeo",json.dumps(dic,sort_keys=True)])
 
-def Metamorfosis(player,personaje,dano,gastarmana):
+def Metamorfosis(players,player,personaje,dano,gastarmana,username):
     players[username].personaje=personaje
-    players[username].dano=players[username].dano+dano
+    players[username].dano=dano
     players[username].gastarmana =gastarmana  
 
 
@@ -885,9 +887,9 @@ def Game(n):
           enemigo2=Enemigo("Cristian",6,500,500,400,400,200,1,100,100,0)
           enemigo3=Enemigo("Risitas",4,400,500,400,400,150,1,100,100,0)
           enemigo4=Enemigo("Ronal",8,550,530,400,400,100,1,100,100,0)
-
-          enemigos2.add(enemigo)
           enemigos2.add(enemigo1)
+          enemigos2.add(enemigo)
+          
           enemigos2.add(enemigo2)
           enemigos2.add(enemigo3)
           enemigos2.add(enemigo4)
@@ -991,7 +993,7 @@ def Game(n):
       for event in pygame.event.get():
       	
          tecla= pygame.key.get_pressed()
-
+         mouse=pygame.mouse.get_focused()
          if event.type==QUIT:
            pygame.quit()
            sys.exit()
@@ -1003,25 +1005,24 @@ def Game(n):
          for i in tecla:
            sumatoria =sumatoria+i
 
-         if tecla[K_LEFT]:
+         if tecla[K_LEFT] and not mouse:
            players[username].moverizquierda(socket_server,username)           
 
-         elif tecla[K_RIGHT]:
+         elif tecla[K_RIGHT] and not mouse:
            players[username].moverderecha(socket_server,username)      
 
-         elif tecla[K_UP]:
+         elif tecla[K_UP] and not mouse:
            players[username].moverarriba(socket_server,username)         
  
-         elif tecla[K_DOWN] :
+         elif tecla[K_DOWN] and not mouse:
            players[username].moverabajo(socket_server,username) 
          
-         if(sumatoria == 0):
+         if(sumatoria == 0 and not mouse):
             players[username].Horienta()
-            #dic={"username":username,"posx":players[username].rect.x,"posy":players[username].rect.y,"i":0,"personaje":players[username].personaje,"carpeta":"carpeta","bandera":True}
-            #socket_server.send_multipart(["Horienta",json.dumps(dic,sort_keys=True)])
+            
          sumatoria =0
 
-         if tecla[K_SPACE]:
+         if tecla[K_SPACE] and not mouse:
          
            q=players[username]
            q.anima(q.personaje)
@@ -1036,12 +1037,12 @@ def Game(n):
            dic={"username":username,"posx":q.rect.x,"posy":q.rect.y,"direc":q.direc,"i":q.i,"vida":q.vida,"personaje":q.personaje,"dano":q.dano,"gastarmana":q.gastarmana,"carpeta":carpeta,"bandera":True}
            socket_server.send_multipart(["golpe",json.dumps(dic,sort_keys=True)])
 
-         if tecla[K_z]:
+         if tecla[K_z] and not mouse:
             if(players[username].personaje ==players[username].copia and players[username].mana>0): 
-               Metamorfosis(players[username],4,players[username].dano+5,True)
-         if tecla[K_x]:
+               Metamorfosis(players,players[username],4,players[username].dano+5,True,username)
+         if tecla[K_x]and not mouse:
             if(players[username].personaje!=players[username].copia):
-               Metamorfosis(players[username],players[username].copia,players[username].dano-5,False)
+               Metamorfosis(players,players[username],players[username].copia,players[username].dano-5,False,username)
         
     #FUNCIONES PERSONAJE PRINCIPAL FIN 
         
