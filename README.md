@@ -6,10 +6,8 @@
 
 2. Instalar libreria pygame:
 
-        sudo ape-get install python-pygame
+        sudo apt-get install python-pygame
 3. Instalar libreria pyzmq:
-
-        sudo apt-get install libzmq-dev
      
         sudo apt-get install python-zmq
 
@@ -24,5 +22,5 @@
 
 # Problemas
 
-1. detecta evento del mouse que crear errores en el juego
+1. detecta evento del mouse que crea errores en el juego
 2. enemigos diferentes en cada juego (en desarrollo)
