@@ -338,8 +338,8 @@ class Jugador(pygame.sprite.Sprite):
          self.rect.x=self.x
          self.rect.y=self.y
          self.image=self.Pj
-         dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":0,"vida":self.vida,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":carpeta,"bandera":True}         
-         socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
+         #dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":0,"vida":self.vida,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":carpeta,"bandera":True}         
+         #socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
 
     def interfase(self):
          propiedades= pygame.sprite.Group()
@@ -1005,24 +1005,24 @@ def Game(n):
          for i in tecla:
            sumatoria =sumatoria+i
 
-         if tecla[K_LEFT] and not mouse:
+         if tecla[K_LEFT] :
            players[username].moverizquierda(socket_server,username)           
 
-         elif tecla[K_RIGHT] and not mouse:
+         elif tecla[K_RIGHT] :
            players[username].moverderecha(socket_server,username)      
 
-         elif tecla[K_UP] and not mouse:
+         elif tecla[K_UP] :
            players[username].moverarriba(socket_server,username)         
  
-         elif tecla[K_DOWN] and not mouse:
+         elif tecla[K_DOWN] :
            players[username].moverabajo(socket_server,username) 
          
-         if(sumatoria == 0 and not mouse):
+         if(sumatoria == 0 ):
             players[username].Horienta()
             
          sumatoria =0
 
-         if tecla[K_SPACE] and not mouse:
+         if tecla[K_SPACE] :
          
            q=players[username]
            q.anima(q.personaje)
@@ -1037,10 +1037,10 @@ def Game(n):
            dic={"username":username,"posx":q.rect.x,"posy":q.rect.y,"direc":q.direc,"i":q.i,"vida":q.vida,"personaje":q.personaje,"dano":q.dano,"gastarmana":q.gastarmana,"carpeta":carpeta,"bandera":True}
            socket_server.send_multipart(["golpe",json.dumps(dic,sort_keys=True)])
 
-         if tecla[K_z] and not mouse:
+         if tecla[K_z] :
             if(players[username].personaje ==players[username].copia and players[username].mana>0): 
                Metamorfosis(players,players[username],4,players[username].dano+5,True,username)
-         if tecla[K_x]and not mouse:
+         if tecla[K_x]:
             if(players[username].personaje!=players[username].copia):
                Metamorfosis(players,players[username],players[username].copia,players[username].dano-5,False,username)
         
