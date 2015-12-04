@@ -36,17 +36,16 @@ def seleccionar_personaje(cursor):
     img1=pygame.image.load("objetos/pj1.png")
     img2=pygame.image.load("objetos/pj2.png")
     img3=pygame.image.load("objetos/pj3.png")
+    img4=pygame.image.load("objetos/pj4.png")
     seleccionar1= pygame.image.load("objetos/botones/3.png")
     seleccionar12= pygame.image.load("objetos/botones/3.3.png")
-    seleccionar2= pygame.image.load("objetos/botones/3.png")
-    seleccionar22= pygame.image.load("objetos/botones/3.3.png")
-    seleccionar3= pygame.image.load("objetos/botones/3.png")
-    seleccionar32= pygame.image.load("objetos/botones/3.3.png")
+    
     salir1= pygame.image.load("objetos/botones/2.png")
     salir2= pygame.image.load("objetos/botones/2.2.png")
-    boton1= Boton(seleccionar1,seleccionar12,160,450)
-    boton2= Boton(seleccionar2,seleccionar22,396,450)
-    boton3= Boton(seleccionar3,seleccionar32,630,450)
+    boton1= Boton(seleccionar1,seleccionar12,90,450)
+    boton2= Boton(seleccionar1,seleccionar12,326,450)
+    boton3= Boton(seleccionar1,seleccionar12,562,450)
+    boton4= Boton(seleccionar1,seleccionar12,798,450)
     boton6= Boton(salir1,salir2,800,550)
 
     cerrar= False
@@ -66,17 +65,22 @@ def seleccionar_personaje(cursor):
                 elif cursor.colliderect(boton3.rect):
                     pygame.mixer.music.stop()
                     Game(1)
+                elif cursor.colliderect(boton4.rect):
+                    pygame.mixer.music.stop()
+                    Game(5)
                 if cursor.colliderect(boton6.rect):
                     cerrar=True
                 
         cursor.posicion()
         PANTALLA.blit(fondo,(0,0))
-        PANTALLA.blit(img1,(110,150))
-        PANTALLA.blit(img2,(346,150))
-        PANTALLA.blit(img3,(582,150))
+        PANTALLA.blit(img1,(30,150))
+        PANTALLA.blit(img2,(266,150))
+        PANTALLA.blit(img3,(502,150))
+        PANTALLA.blit(img4,(738,150))
         boton1.accion(PANTALLA,cursor)
         boton2.accion(PANTALLA,cursor)
         boton3.accion(PANTALLA,cursor)
+        boton4.accion(PANTALLA,cursor)
         boton6.accion(PANTALLA,cursor)
         pygame.display.flip()
 
@@ -146,6 +150,8 @@ class Fondos (pygame.sprite.Sprite):
         
     def Cambiomapa(self,x,y,fondo):
         self.image=pygame.image.load("fondos/"+str(fondo)+".png")
+    def Cambiominimapa(self,x,y,fondo):
+        self.image=pygame.image.load("fondos/mini/"+str(fondo)+".png")
 
 class Jugador(pygame.sprite.Sprite):
     def __init__(self,nombre,direc,x,y,fondo,personaje):
@@ -173,6 +179,7 @@ class Jugador(pygame.sprite.Sprite):
         self.direcchoque=0
         self.choque=False
         self.fondo=fondo
+        self.muestramapa=False
         self.choqueobjetos=False
         self.copia=self.personaje
         self.gastarmana=False
@@ -746,6 +753,8 @@ def manejo_mapas(fondo,player,x,y,fondo_aux,socket_server):
     player.y=y
     player.fondo=fondo_aux
     fondo.fondo=fondo_aux
+    if(player.muestramapa):
+        fondo.Cambiominimapa(-330,0,player.fondo)
     dic={"mapa":fondo_aux,"username":player.nombre,"bandera":False}
     socket_server.send_multipart(["mapeo",json.dumps(dic,sort_keys=True)])
 
@@ -879,7 +888,7 @@ def Game(n):
 
           #MAPA 2___________________________________________________________INICIO MAPA 2
           enemigos2= pygame.sprite.Group()
-          objetos1=pygame.sprite.Group()
+          objetos2=pygame.sprite.Group()
 
           #__________________ENEMIGOS
           enemigo=Enemigo("Ronal",8,200,400,100,100,100,1,100,100,0)
@@ -896,14 +905,60 @@ def Game(n):
 
 
           #___________________OBJETOS
+          
+          ob1= Objetosinvi(0,650,"50-50")
+          ob2= Objetosinvi(50,650,"50-50")
+          ob3= Objetosinvi(100,650,"50-50")
+          ob4= Objetosinvi(420,660,"50-50")
+          ob5= Objetosinvi(190,-50,"150-150")
+          ob6= Objetosinvi(0,0,"50-50")
+          ob7= Objetosinvi(30,-30,"50-50")
+          ob8= Objetosinvi(350,330,"10-10")
 
+
+          ob10= Objetosinvi(600,390,"10-10")
+          ob11= Objetosinvi(620,410,"10-10")
+          ob12= Objetosinvi(640,430,"10-10")
+          ob13= Objetosinvi(660,450,"10-10")
+          ob14= Objetosinvi(680,470,"10-10")
+          ob15= Objetosinvi(700,480,"10-10")
+          ob16= Objetosinvi(720,500,"10-10")
+          ob17= Objetosinvi(740,490,"10-10")
+          ob18= Objetosinvi(760,500,"10-10")
+          ob19= Objetosinvi(780,510,"10-10")
+          ob20= Objetosinvi(790,500,"10-10")
+
+          ob22= Objetosinvi(1000,0,"1000")
+          objetos2.add(ob22)
+
+
+          objetos2.add(ob1)
+          objetos2.add(ob2)
+          objetos2.add(ob3)
+          objetos2.add(ob4)
+          objetos2.add(ob5)
+          objetos2.add(ob6)
+          objetos2.add(ob7)
+          objetos2.add(ob8)
+
+          objetos2.add(ob10)
+          objetos2.add(ob11)
+          objetos2.add(ob12)
+          objetos2.add(ob13)
+          objetos2.add(ob14)
+          objetos2.add(ob15)
+          objetos2.add(ob16)
+          objetos2.add(ob17)
+          objetos2.add(ob18)
+          objetos2.add(ob19)
+          objetos2.add(ob20)
           #____________________________________________________________________FINDEMAPA2
 
 
 
           #MAPA3___________________________________________________________INICIOMAPA3
           enemigos3=pygame.sprite.Group()
-
+          objetos3=pygame.sprite.Group()
           #__________________ENEMIGOS
           enemigo=Enemigo("Ronal",8,200,400,100,100,100,1,100,100,1)
           enemigo1=Enemigo("Reinosa",2,400,400,400,400,250,1,100,100,1)
@@ -927,13 +982,16 @@ def Game(n):
 
           #MAPA4_______________________________________________________________INICIOMAPA4
           enemigos4=pygame.sprite.Group()
-          objetos2=pygame.sprite.Group()
+          objetos4=pygame.sprite.Group()
 
           #__________________ENEMIGOS
           enemigo=Enemigo("ELPODEROSOYPITUDOBOSFINAL",8,500,450,400,400,200,5,1000,100,3)
 
           enemigos4.add(enemigo)
+          ob23= Objetosinvi(0,700,"1000")
 
+
+          objetos4.add(ob23)
 
           #___________________OBJETOS
 
@@ -943,7 +1001,7 @@ def Game(n):
 
           #MAPA5___________________________________________________________INICIOMAPA5
           enemigos5=pygame.sprite.Group()
-
+          objetos5=pygame.sprite.Group()
           #__________________ENEMIGOS
           enemigo=Enemigo("Ronal",8,200,300,100,100,100,1,100,100,2)
           enemigo1=Enemigo("Reinosa",2,600,300,500,300,250,1,100,100,2)
@@ -959,19 +1017,289 @@ def Game(n):
 
 
           #___________________OBJETOS
+          #MAPA 6___________________________________________________________INICIO MAPA 6
+          enemigos6= pygame.sprite.Group()
+          objetos6= pygame.sprite.Group()
 
-          #FONDOINICIAL
-          fondos=pygame.sprite.Group()
-          fondo=Fondos(-330,0,1)
+          #__________________ENEMIGOS
+          enemigo=Enemigo("Feo1",8,200,400,100,100,100,1,100,100,0)
+          enemigo1=Enemigo("Feo2",2,400,400,400,300,250,1,100,100,1)
+
+
+          enemigos6.add(enemigo)
+          enemigos6.add(enemigo1)
+
+
+
+          #___________________OBJETOS 
+
+
+
+          #____________________________________________________________________FIN DE MAPA 6
+
+
+          #MAPA 6___________________________________________________________INICIO MAPA 7
+          enemigos7= pygame.sprite.Group()
+          objetos7= pygame.sprite.Group()
+
+          #__________________ENEMIGOS
+          enemigo=Enemigo("sol",8,200,400,100,100,100,1,100,100,2)
+          enemigo1=Enemigo("luna",2,400,400,400,300,250,1,100,100,2)
+
+          enemigos7.add(enemigo)
+          enemigos7.add(enemigo1)
+
+
+
+          #___________________OBJETOS 
+
+
+
+          #____________________________________________________________________FIN DE MAPA 7
+
+
+          #MAPA 8___________________________________________________________INICIO MAPA 8
+          enemigos8= pygame.sprite.Group()
+          objetos8= pygame.sprite.Group()
+
+          #__________________ENEMIGOS
+          enemigo=Enemigo("nose",8,200,400,100,100,100,1,100,100,0)
+          enemigo1=Enemigo("nose2",2,400,400,400,300,250,1,100,100,0)
+
+          enemigos8.add(enemigo)
+          enemigos8.add(enemigo1)
+
+
+
+          #___________________OBJETOS 
+
+
+
+          #____________________________________________________________________FIN DE MAPA 8
+
+
+
+
+          #MAPA 9___________________________________________________________INICIO MAPA 9
+          enemigos9= pygame.sprite.Group()
+          objetos9= pygame.sprite.Group()
+
+          #__________________ENEMIGOS
+
+
+
+
+          #___________________OBJETOS 
+
+
+
+          #____________________________________________________________________FIN DE MAPA 9
+
+
+          #MAPA 10___________________________________________________________INICIO MAPA 10
+          enemigos10= pygame.sprite.Group()
+          objetos10= pygame.sprite.Group()
+
+          #__________________ENEMIGOS
+          enemigo=Enemigo("lool",8,200,400,100,100,100,1,100,100,2)
+          enemigo1=Enemigo("leel",2,400,400,400,300,250,1,100,100,2)
+
+          enemigos10.add(enemigo)
+          enemigos10.add(enemigo1)
+
+
+
+          #___________________OBJETOS 
+
+
+
+          #MAPA 11___________________________________________________________INICIO DE MAPA 11
+
+
+          enemigos11= pygame.sprite.Group()
+          objetos11= pygame.sprite.Group()
+
+          #__________________ENEMIGOS
+          enemigo=Enemigo("zion",8,200,400,100,100,100,1,100,100,1)
+          enemigo1=Enemigo("wid",2,400,400,400,300,250,1,100,100,0)
+
+          enemigos11.add(enemigo)
+          enemigos11.add(enemigo1)
+
+
+
+          #___________________OBJETOS 
+
+
+
+          #____________________________________________________________________FIN DE MAPA 11
+
+
+          #MAPA 12___________________________________________________________INICIO DE MAPA 12
+
+
+          enemigos12= pygame.sprite.Group()
+          objetos12= pygame.sprite.Group()
+
+          #__________________ENEMIGOS
+          enemigo=Enemigo("zion",8,200,400,100,100,100,1,100,100,2)
+          enemigo1=Enemigo("wid",2,400,400,400,300,250,1,100,100,2)
+
+          enemigos12.add(enemigo)
+          enemigos12.add(enemigo1)
+
+
+          #___________________OBJETOS 
+
+
+
+          #____________________________________________________________________FIN DE MAPA 12
+
+
+          #MAPA 13___________________________________________________________INICIO DE MAPA 13
+
+
+          enemigos13= pygame.sprite.Group()
+          objetos13= pygame.sprite.Group()
+
+          #__________________ENEMIGOS
+
+
+          #___________________OBJETOS 
+
+
+
+          #____________________________________________________________________FIN DE MAPA 13
+
+
+
+          #MAPA 14___________________________________________________________INICIO DE MAPA 14
+
+
+          enemigos14= pygame.sprite.Group()
+          objetos14= pygame.sprite.Group()
+
+          #__________________ENEMIGOS
+          enemigo=Enemigo("z",8,200,400,100,100,100,1,100,100,0)
+          enemigo1=Enemigo("w",2,400,400,400,300,250,1,100,100,0)
+
+          enemigos14.add(enemigo)
+          enemigos14.add(enemigo1)
+
+
+          #___________________OBJETOS 
+
+          #MAPA 15___________________________________________________________INICIO DE MAPA 15
+
+
+          enemigos15= pygame.sprite.Group()
+          objetos15= pygame.sprite.Group()
+
+          #__________________ENEMIGOS
+          enemigo=Enemigo("zzzz",8,200,400,100,100,100,1,100,100,0)
+          enemigo1=Enemigo("weri",2,400,400,400,300,250,1,100,100,0)
+
+          enemigos15.add(enemigo)
+          enemigos15.add(enemigo1)
+
+
+          #___________________OBJETOS
+
+
+          #MAPA 16___________________________________________________________INICIO DE MAPA 16
+
+
+          enemigos16= pygame.sprite.Group()
+          objetos16= pygame.sprite.Group()
+
+          #__________________ENEMIGOS
+          enemigo=Enemigo("zion",8,200,400,100,100,100,1,100,100,1)
+          enemigo1=Enemigo("xion",2,400,400,400,300,250,1,100,100,1)
+
+          enemigos16.add(enemigo)
+          enemigos16.add(enemigo1)
+
+
+          #___________________OBJETOS
+
+
+
+
+
+
+          #MAPA 17_______________________________________________________________INICIO MAPA 17
+          enemigos17= pygame.sprite.Group()
+          objetos17= pygame.sprite.Group()
+          #__________________ENEMIGOS
+          enemigo=Enemigo("LEO",8,500,450,400,400,200,5,1000,100,3)
+          enemigo1=Enemigo("LEO HIJO",8,600,350,400,400,200,5,500,100,3)
+          enemigo2=Enemigo("ZION",8,300,650,400,400,200,5,500,100,3)
+
+          enemigos17.add(enemigo)
+          enemigos17.add(enemigo1)
+          enemigos17.add(enemigo2)
+
+
+          #___________________OBJETOS
+
+
+
+
+
+          #______________________________________________________________________FIN DE MAPA 17
+
+
+
+
+          #MAPA 18___________________________________________________________INICIO MAPA 18
+          enemigos18= pygame.sprite.Group()
+          objetos18= pygame.sprite.Group()
+
+          #__________________ENEMIGOS
+          enemigo=Enemigo("Ronal",8,200,300,100,100,100,1,100,100,2)
+          enemigo1=Enemigo("Reinosa",2,600,300,500,300,250,1,100,100,2)
+          enemigo2=Enemigo("Cristian",6,400,400,300,400,200,1,100,100,2)
+          enemigo3=Enemigo("Risitas",4,400,500,400,400,150,1,100,100,2)
+          enemigo4=Enemigo("Ronal",8,500,200,200,200,100,1,100,100,2)
+
+          enemigos18.add(enemigo)
+          enemigos18.add(enemigo1)
+          enemigos18.add(enemigo2)
+          enemigos18.add(enemigo3)
+          enemigos18.add(enemigo4)
+
+
+          #___________________OBJETOS
+          #MAPA 5___________________________________________________________Fin MAPA 5
+
+
+
+
+
+          #FONDO INICIAL
+          fondos= pygame.sprite.Group()
+          fondo= Fondos(-330,0,1)
           fondos.add(fondo)
 
-
-          #INTERFASVIDAMANA NOMBRE
+          #INTERFAS VIDA MANA NOMBRE
           nombre_vida_mana3= pygame.sprite.Group()
           nombre_vida_mana2= pygame.sprite.Group()
           nombre_vida_mana1= pygame.sprite.Group()
           nombre_vida_mana= pygame.sprite.Group()
-          nombre_vida_mana4 = pygame.sprite.Group()
+          nombre_vida_mana4= pygame.sprite.Group()
+          nombre_vida_mana6= pygame.sprite.Group()
+          nombre_vida_mana7= pygame.sprite.Group()
+          nombre_vida_mana8= pygame.sprite.Group()
+          nombre_vida_mana9= pygame.sprite.Group()
+          nombre_vida_mana10= pygame.sprite.Group()
+          nombre_vida_mana11= pygame.sprite.Group()
+          nombre_vida_mana12= pygame.sprite.Group()
+          nombre_vida_mana13= pygame.sprite.Group()
+          nombre_vida_mana14= pygame.sprite.Group()
+          nombre_vida_mana15= pygame.sprite.Group()
+          nombre_vida_mana16= pygame.sprite.Group()
+          nombre_vida_mana17= pygame.sprite.Group()
+          nombre_vida_mana18= pygame.sprite.Group()
 
           #INICIO MUSICA FONDO
           pygame.mixer.music.load("musica/2.mp3")
@@ -1043,6 +1371,14 @@ def Game(n):
          if tecla[K_x]:
             if(players[username].personaje!=players[username].copia):
                Metamorfosis(players,players[username],players[username].copia,players[username].dano-5,False,username)
+
+         if tecla[K_m]:
+           fondo.Cambiominimapa(-330,0,players[username].fondo)
+           players[username].muestramapa=True 
+
+         if tecla[K_n]:
+           fondo.Cambiomapa(-330,0,players[username].fondo)
+           players[username].muestramapa=False 
         
     #FUNCIONES PERSONAJE PRINCIPAL FIN 
         
@@ -1077,58 +1413,324 @@ def Game(n):
   #MAPA 2 _________________________________________________________MAPA 2 INICIO
            
       if(fondo.fondo==2):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos2,jugadores,objetos1,mapeo,nombre_vida_mana1))   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos2,jugadores,objetos2,mapeo,nombre_vida_mana1))   
       else: 
-        mapeo=AnimacionMapas.KillAnimacion(enemigos2,objetos1,mapeo,nombre_vida_mana1)
+        mapeo=AnimacionMapas.KillAnimacion(enemigos2,objetos2,mapeo,nombre_vida_mana1)
            
   #MAPA 3 _________________________________________________________MAPA 3 INICIO
     
       if(fondo.fondo==3):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos3,jugadores,objetos1,mapeo,nombre_vida_mana2))   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos3,jugadores,objetos3,mapeo,nombre_vida_mana2))   
       else: 
-        mapeo=AnimacionMapas.KillAnimacion(enemigos3,objetos1,mapeo,nombre_vida_mana2)
+        mapeo=AnimacionMapas.KillAnimacion(enemigos3,objetos3,mapeo,nombre_vida_mana2)
 
   #MAPA 4______________________________________________________INICIO MAPA 4
       if(fondo.fondo==5):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos4,jugadores,objetos1,mapeo,nombre_vida_mana3))   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos4,jugadores,objetos4,mapeo,nombre_vida_mana3))   
       else: 
-        mapeo=AnimacionMapas.KillAnimacion(enemigos4,objetos1,mapeo,nombre_vida_mana3)     
+        mapeo=AnimacionMapas.KillAnimacion(enemigos4,objetos4,mapeo,nombre_vida_mana3)     
 
   #MAPA 5______________________________________________________INICIO MAPA 5
 
       if(fondo.fondo==4):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos5,jugadores,objetos1,mapeo,nombre_vida_mana4))   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos5,jugadores,objetos5,mapeo,nombre_vida_mana4))   
       else: 
-        mapeo=AnimacionMapas.KillAnimacion(enemigos5,objetos1,mapeo,nombre_vida_mana4)
-        
+        mapeo=AnimacionMapas.KillAnimacion(enemigos5,objetos5,mapeo,nombre_vida_mana4)
+    #INICIO MAPA 6______________________________________________________INICIO MAPA 6
+
+      if(fondo.fondo==6):   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos6,jugadores,objetos6,mapeo,nombre_vida_mana6))   
+      else: 
+        mapeo=AnimacionMapas.KillAnimacion(enemigos6,objetos6,mapeo,nombre_vida_mana6)  
+
+#INICIO MAPA 7______________________________________________________INICIO MAPA 7
+
+      if(fondo.fondo==7):   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos7,jugadores,objetos7,mapeo,nombre_vida_mana7))   
+      else: 
+        mapeo=AnimacionMapas.KillAnimacion(enemigos7,objetos7,mapeo,nombre_vida_mana7)  
+
+
+#INICIO MAPA 8______________________________________________________INICIO MAPA 8
+
+      if(fondo.fondo==8):   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos8,jugadores,objetos8,mapeo,nombre_vida_mana8))   
+      else: 
+        mapeo=AnimacionMapas.KillAnimacion(enemigos8,objetos8,mapeo,nombre_vida_mana8)  
+
+
+#INICIO MAPA 9______________________________________________________INICIO MAPA 9
+
+      if(fondo.fondo==8):   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos9,jugadores,objetos9,mapeo,nombre_vida_mana9))   
+      else: 
+        mapeo=AnimacionMapas.KillAnimacion(enemigos9,objetos9,mapeo,nombre_vida_mana9)  
+
+#INICIO MAPA 10______________________________________________________INICIO MAPA 10
+
+      if(fondo.fondo==10):   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos10,jugadores,objetos10,mapeo,nombre_vida_mana10))   
+      else: 
+        mapeo=AnimacionMapas.KillAnimacion(enemigos10,objetos10,mapeo,nombre_vida_mana10)  
+
+#INICIO MAPA 11______________________________________________________INICIO MAPA 11
+
+      if(fondo.fondo==11):   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos11,jugadores,objetos11,mapeo,nombre_vida_mana11))   
+      else: 
+        mapeo=AnimacionMapas.KillAnimacion(enemigos11,objetos11,mapeo,nombre_vida_mana11)  
+
+#INICIO MAPA 12______________________________________________________INICIO MAPA 12
+
+      if(fondo.fondo==12):   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos12,jugadores,objetos12,mapeo,nombre_vida_mana12))   
+      else: 
+        mapeo=AnimacionMapas.KillAnimacion(enemigos12,objetos12,mapeo,nombre_vida_mana12)  
+
+
+#INICIO MAPA 13______________________________________________________INICIO MAPA 13
+
+      if(fondo.fondo==13):   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos13,jugadores,objetos13,mapeo,nombre_vida_mana13))   
+      else: 
+        mapeo=AnimacionMapas.KillAnimacion(enemigos13,objetos13,mapeo,nombre_vida_mana13)
+
+
+#INICIO MAPA 14______________________________________________________INICIO MAPA 14
+
+      if(fondo.fondo==14):   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos14,jugadores,objetos14,mapeo,nombre_vida_mana14))   
+      else: 
+        mapeo=AnimacionMapas.KillAnimacion(enemigos14,objetos14,mapeo,nombre_vida_mana14)
+
+
+#INICIO MAPA 15______________________________________________________INICIO MAPA 15
+
+      if(fondo.fondo==15):   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos15,jugadores,objetos15,mapeo,nombre_vida_mana15))   
+      else: 
+        mapeo=AnimacionMapas.KillAnimacion(enemigos15,objetos15,mapeo,nombre_vida_mana15)
+
+#INICIO MAPA 16______________________________________________________INICIO MAPA 16
+
+      if(fondo.fondo==16):   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos16,jugadores,objetos16,mapeo,nombre_vida_mana16))   
+      else: 
+        mapeo=AnimacionMapas.KillAnimacion(enemigos16,objetos16,mapeo,nombre_vida_mana16)
+
+#INICIO MAPA 17______________________________________________________INICIO MAPA 17
+
+      if(fondo.fondo==17):   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos17,jugadores,objetos17,mapeo,nombre_vida_mana17))   
+      else: 
+        mapeo=AnimacionMapas.KillAnimacion(enemigos17,objetos17,mapeo,nombre_vida_mana17)
+
+
+#INICIO MAPA 18______________________________________________________INICIO MAPA 17
+
+      if(fondo.fondo==18):   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos18,jugadores,objetos18,mapeo,nombre_vida_mana18))   
+      else: 
+        mapeo=AnimacionMapas.KillAnimacion(enemigos18,objetos18,mapeo,nombre_vida_mana18)    
         
            
 #INICIO MANEJO DE MAPAS _______________________________________________________________
       p=players[username]
       if(p.x>1000 or p.x<0 or p.y<0 or  p.y>0 ):
         if(1==p.fondo and p.y>ALTO):
-          manejo_mapas(fondo,p,500,0,2,socket_server)
-          
-        if(2==p.fondo and p.y<-20):
-          manejo_mapas(fondo,p,250,700,1,socket_server)
-         
-        if(1==p.fondo and p.x<0):
-          manejo_mapas(fondo,p,1000,p.y,3,socket_server)
+            
+            manejo_mapas(fondo,p,500,0,2,socket_server)
+             
 
-        if(3==p.fondo and p.x>ANCHO):
-          manejo_mapas(fondo,p,0,p.y,1,socket_server)
-          
+        if(1==p.fondo and p.x>1000):
+            
+            manejo_mapas(fondo,p,0,p.y,6,socket_server)
+
+        if(6==p.fondo and p.x<0):
+            
+            manejo_mapas(fondo,p,1000,300,1,socket_server)
+
+        if(6==p.fondo and p.y<0):
+           
+            manejo_mapas(fondo,p,400,680,7,socket_server)
+
+        if(7==p.fondo and p.y>700):
+            
+            manejo_mapas(fondo,p,200,20,6,socket_server)
+
+        if(7==p.fondo and p.y<0):
+            
+            manejo_mapas(fondo,p,200,680,8,socket_server)
+
+        if(7==p.fondo and p.x<0):
+            
+            manejo_mapas(fondo,p,990,300,4,socket_server)
+
+        if(4==p.fondo and p.x>1000):
+            
+            manejo_mapas(fondo,p,0,300,7,socket_server)
+
+             
+
+        if(7==p.fondo and p.y<0):
+            
+            manejo_mapas(fondo,p,200,680,8,socket_server)
+
+        if(8==p.fondo and p.y>700):
+            
+            manejo_mapas(fondo,p,200,0,7,socket_server)
+
+
+        if(8==p.fondo and p.x<0):
+           
+            manejo_mapas(fondo,p,1000,350,9,socket_server)
+
+        if(9==p.fondo and p.x>1000):
+           
+            manejo_mapas(fondo,p,0,350,8,socket_server)
+
+        if(9==p.fondo and p.x<0):
+            
+            manejo_mapas(fondo,p,1000,350,10,socket_server)             
+
+        if(10==p.fondo and p.x>1000):
+            
+            manejo_mapas(fondo,p,0,40,9,socket_server)
+
+        if(10==p.fondo and p.y>700):
+            
+            manejo_mapas(fondo,p,350,0,11,socket_server)
+
+
+        if(10==p.fondo and p.y<0):
+            
+            manejo_mapas(fondo,p,p.x,680,13,socket_server)
+
+        if(13==p.fondo and p.y>700):
+            
+            manejo_mapas(fondo,p,550,0,10,socket_server)
+
+
+
+        if(11==p.fondo and p.y<0):
+            
+            manejo_mapas(fondo,p,350,680,10,socket_server)  
+
+
+        if(11==p.fondo and p.y>700):
+            
+            manejo_mapas(fondo,p,350,0,12,socket_server)
+
+        if(12==p.fondo and p.y<0):
+            
+            manejo_mapas(fondo,p,350,680,11,socket_server)
+
+        if(12==p.fondo and p.y>700):
+            
+            manejo_mapas(fondo,p,430,0,4,socket_server)  
+
+        if(4==p.fondo and p.y<0):
+           
+            manejo_mapas(fondo,p,300,680,12,socket_server)
+
+        if(4==p.fondo and p.x<0):
+            
+            manejo_mapas(fondo,p,980,480,15,socket_server)  
+
+        if(15==p.fondo and p.x>980):
+            
+            manejo_mapas(fondo,p,0,450,4,socket_server)           
+ 
+
+        if(2==p.fondo and p.y<-20):
+            
+            manejo_mapas(fondo,p,250,700,1,socket_server)
+
+        if(2==p.fondo and p.x<0):
+            
+            manejo_mapas(fondo,p,140,1000,16,socket_server)
+
+        if(16==p.fondo and p.x>1000):
+            
+            manejo_mapas(fondo,p,0,350,2,socket_server) 
+
+
+        if(1==p.fondo and p.x<0):
+           
+            manejo_mapas(fondo,p,1000,p.y,3,socket_server)
+
+        if(3==p.fondo and p.x>1000):
+           
+            manejo_mapas(fondo,p,0,320,1,socket_server)
+
+        if(3==p.fondo and p.x<0):
+           
+            manejo_mapas(fondo,p,980,320,14,socket_server)
+
+        if(14==p.fondo and p.x>1000):
+            
+            manejo_mapas(fondo,p,0,320,3,socket_server)
+
+        if(14==p.fondo and p.y>700):
+           
+            manejo_mapas(fondo,p,350,0,16,socket_server)
+
+        if(16==p.fondo and p.y<0):
+            
+            manejo_mapas(fondo,p,350,689,14,socket_server)
+
+        if(16==p.fondo and p.y>700):
+            
+            manejo_mapas(fondo,p,350,0,17,socket_server)
+
+        if(17==p.fondo and p.y<0):
+            
+            manejo_mapas(fondo,p,350,689,16,socket_server)
+
+
+        if(14==p.fondo and p.y<0):
+            
+            manejo_mapas(fondo,p,500,690,15,socket_server)
+
+        if(15==p.fondo and p.y>700):
+            
+            manejo_mapas(fondo,p,500,0,14,socket_server)
+
+
+             
+
         if(1==p.fondo and p.y<0):
-          manejo_mapas(fondo,p,p.x,680,4,socket_server)
+            
+            manejo_mapas(fondo,p,p.x,680,4,socket_server)  
 
         if(4==p.fondo and p.y>700):
-          manejo_mapas(fondo,p,p.x,20,1,socket_server)
+           
+            manejo_mapas(fondo,p,700,20,1,socket_server)       
 
         if(2==p.fondo and p.y>700):
-          manejo_mapas(fondo,p,p.x,0,5,socket_server)
+           
+            manejo_mapas(fondo,p,400,50,5,socket_server) 
 
         if(5==p.fondo and p.y<0):
-          manejo_mapas(fondo,p,p.x,700,2,socket_server)
+            
+            manejo_mapas(fondo,p,180,680,2,socket_server)
+
+        if(17==p.fondo and p.x>1000):
+            
+            manejo_mapas(fondo,p,0,200,5,socket_server)
+
+        if(5==p.fondo and p.x<0):
+            
+            manejo_mapas(fondo,p,990,200,17,socket_server)
+
+        if(5==p.fondo and p.x>1000):
+           
+            manejo_mapas(fondo,p,0,200,18,socket_server)
+
+        if(18==p.fondo and p.x<0):
+            
+            manejo_mapas(fondo,p,990,200,5,socket_server) 
+            
 
 
         for iterador,p in players.iteritems():
