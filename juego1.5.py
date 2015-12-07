@@ -341,7 +341,7 @@ class Jugador(pygame.sprite.Sprite):
           socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
 
 
-    def Horienta(self):
+    def Orientacion(self):
 
          if(self.direc==4):
             self.Pj= pygame.image.load("Personajes/"+str(self.personaje)+"/laterali/0.png")
@@ -876,16 +876,19 @@ def Game(n):
           if counter:
               counter=False
               init=True
-
+              #FONDO INICIAL
+              fondos= pygame.sprite.Group()
+              fondo= Fondos(-330,0,players[username].fondo)
+              fondos.add(fondo)
               #INICIALIZARPERSONAJEPRINCIPAL
               AnimacionMapas=AnimacionMapa()
-              #MAPA1_____________________________________________________________INICIOMAPA1
-              enemigos=pygame.sprite.Group()
-              objetos=pygame.sprite.Group()
+              #MAPA 1_____________________________________________________________INICIO MAPA 1
+              enemigos= pygame.sprite.Group()
+              objetos= pygame.sprite.Group()
 
               #__________________ENEMIGOS
 
-              enemigo=Enemigo("Ronal",8,200,400,100,100,250,1,100,100,0)
+              enemigo=Enemigo("Ronal",8,200,400,100,100,100,1,100,100,0)
               enemigos.add(enemigo)
               mapeo.add(enemigos)
 
@@ -917,7 +920,7 @@ def Game(n):
 
               #MAPA 2___________________________________________________________INICIO MAPA 2
               enemigos2= pygame.sprite.Group()
-              objetos2=pygame.sprite.Group()
+              objetos1= pygame.sprite.Group()
 
               #__________________ENEMIGOS
               enemigo=Enemigo("Ronal",8,200,400,100,100,100,1,100,100,0)
@@ -925,16 +928,16 @@ def Game(n):
               enemigo2=Enemigo("Cristian",6,500,500,400,400,200,1,100,100,0)
               enemigo3=Enemigo("Risitas",4,400,500,400,400,150,1,100,100,0)
               enemigo4=Enemigo("Ronal",8,550,530,400,400,100,1,100,100,0)
-              enemigos2.add(enemigo1)
+
               enemigos2.add(enemigo)
-              
+              enemigos2.add(enemigo1)
               enemigos2.add(enemigo2)
               enemigos2.add(enemigo3)
               enemigos2.add(enemigo4)
 
 
-              #___________________OBJETOS
-              
+              #___________________OBJETOS 
+
               ob1= Objetosinvi(0,650,"50-50")
               ob2= Objetosinvi(50,650,"50-50")
               ob3= Objetosinvi(100,650,"50-50")
@@ -958,36 +961,38 @@ def Game(n):
               ob20= Objetosinvi(790,500,"10-10")
 
               ob22= Objetosinvi(1000,0,"1000")
-              objetos2.add(ob22)
+              objetos1.add(ob22)
 
 
-              objetos2.add(ob1)
-              objetos2.add(ob2)
-              objetos2.add(ob3)
-              objetos2.add(ob4)
-              objetos2.add(ob5)
-              objetos2.add(ob6)
-              objetos2.add(ob7)
-              objetos2.add(ob8)
+              objetos1.add(ob1)
+              objetos1.add(ob2)
+              objetos1.add(ob3)
+              objetos1.add(ob4)
+              objetos1.add(ob5)
+              objetos1.add(ob6)
+              objetos1.add(ob7)
+              objetos1.add(ob8)
 
-              objetos2.add(ob10)
-              objetos2.add(ob11)
-              objetos2.add(ob12)
-              objetos2.add(ob13)
-              objetos2.add(ob14)
-              objetos2.add(ob15)
-              objetos2.add(ob16)
-              objetos2.add(ob17)
-              objetos2.add(ob18)
-              objetos2.add(ob19)
-              objetos2.add(ob20)
-              #____________________________________________________________________FINDEMAPA2
-
+              objetos1.add(ob10)
+              objetos1.add(ob11)
+              objetos1.add(ob12)
+              objetos1.add(ob13)
+              objetos1.add(ob14)
+              objetos1.add(ob15)
+              objetos1.add(ob16)
+              objetos1.add(ob17)
+              objetos1.add(ob18)
+              objetos1.add(ob19)
+              objetos1.add(ob20)
 
 
-              #MAPA3___________________________________________________________INICIOMAPA3
-              enemigos3=pygame.sprite.Group()
-              objetos3=pygame.sprite.Group()
+              #____________________________________________________________________FIN DE MAPA 2
+
+
+
+              #MAPA 3___________________________________________________________INICIO MAPA 3
+              enemigos3= pygame.sprite.Group()
+              objetos2= pygame.sprite.Group()
               #__________________ENEMIGOS
               enemigo=Enemigo("Ronal",8,200,400,100,100,100,1,100,100,1)
               enemigo1=Enemigo("Reinosa",2,400,400,400,400,250,1,100,100,1)
@@ -1002,35 +1007,47 @@ def Game(n):
               enemigos3.add(enemigo4)
 
 
+
               #___________________OBJETOS
 
-              #____________________________________________________________________FINDEMAPA3
+
+              ob21= Objetosinvi(0,750,"1000")
+              objetos2.add(ob21)
+
+              ob22= Objetosinvi(0,-750,"1000")
+              objetos2.add(ob22)
+
+              #____________________________________________________________________FIN DE MAPA 3
 
 
 
 
-              #MAPA4_______________________________________________________________INICIOMAPA4
-              enemigos4=pygame.sprite.Group()
-              objetos4=pygame.sprite.Group()
-
+              #MAPA 4_______________________________________________________________INICIO MAPA 4
+              enemigos4= pygame.sprite.Group()
+              objetos4= pygame.sprite.Group()
               #__________________ENEMIGOS
               enemigo=Enemigo("ELPODEROSOYPITUDOBOSFINAL",8,500,450,400,400,200,5,1000,100,3)
 
               enemigos4.add(enemigo)
+
+
+              #___________________OBJETOS
+
+
               ob23= Objetosinvi(0,700,"1000")
 
 
               objetos4.add(ob23)
 
-              #___________________OBJETOS
 
 
-              #______________________________________________________________________FINDEMAPA4
+
+              #______________________________________________________________________FIN DE MAPA 4
 
 
-              #MAPA5___________________________________________________________INICIOMAPA5
-              enemigos5=pygame.sprite.Group()
-              objetos5=pygame.sprite.Group()
+              #MAPA 5___________________________________________________________INICIO MAPA 5
+              enemigos5= pygame.sprite.Group()
+              objetos5= pygame.sprite.Group()
               #__________________ENEMIGOS
               enemigo=Enemigo("Ronal",8,200,300,100,100,100,1,100,100,2)
               enemigo1=Enemigo("Reinosa",2,600,300,500,300,250,1,100,100,2)
@@ -1046,6 +1063,13 @@ def Game(n):
 
 
               #___________________OBJETOS
+              #MAPA 5___________________________________________________________Fin MAPA 5
+
+
+
+
+
+
               #MAPA 6___________________________________________________________INICIO MAPA 6
               enemigos6= pygame.sprite.Group()
               objetos6= pygame.sprite.Group()
@@ -1063,6 +1087,12 @@ def Game(n):
               #___________________OBJETOS 
 
 
+              ob22= Objetosinvi(800,0,"1000")
+              ob20= Objetosinvi(700,500,"1000")
+              ob19= Objetosinvi(0,700,"1000")
+              objetos6.add(ob19)
+              objetos6.add(ob22)
+              objetos6.add(ob20)
 
               #____________________________________________________________________FIN DE MAPA 6
 
@@ -1082,7 +1112,10 @@ def Game(n):
 
               #___________________OBJETOS 
 
-
+              ob19= Objetosinvi(740,-300,"1000")
+              ob20= Objetosinvi(1000,400,"1000")
+              objetos7.add(ob19)
+              objetos7.add(ob20)
 
               #____________________________________________________________________FIN DE MAPA 7
 
@@ -1102,6 +1135,14 @@ def Game(n):
 
               #___________________OBJETOS 
 
+              ob1= Objetosinvi(400,-650,"1000")
+              ob3= Objetosinvi(0,-680,"1000")
+              ob2= Objetosinvi(740,0,"1000")
+              objetos8.add(ob1)
+              objetos8.add(ob2)
+              objetos8.add(ob3)
+
+
 
 
               #____________________________________________________________________FIN DE MAPA 8
@@ -1120,7 +1161,12 @@ def Game(n):
 
               #___________________OBJETOS 
 
-
+              ob1= Objetosinvi(0,700,"1000")
+              ob3= Objetosinvi(0,-800,"1000")
+              ob2= Objetosinvi(-200,200,"1000")
+              objetos9.add(ob1)
+              objetos9.add(ob2)
+              objetos9.add(ob3)
 
               #____________________________________________________________________FIN DE MAPA 9
 
@@ -1140,6 +1186,13 @@ def Game(n):
 
               #___________________OBJETOS 
 
+              ob1= Objetosinvi(-1000,0,"1000")
+              ob3= Objetosinvi(-540,-720,"1000")
+              ob2= Objetosinvi(730,-720,"1000")
+
+              objetos10.add(ob2)
+              objetos10.add(ob1)
+              objetos10.add(ob3)
 
 
               #MAPA 11___________________________________________________________INICIO DE MAPA 11
@@ -1159,6 +1212,15 @@ def Game(n):
 
               #___________________OBJETOS 
 
+              ob1= Objetosinvi(-1000,0,"1000")
+              ob2= Objetosinvi(1000,0,"1000")
+              ob3= Objetosinvi(-850,550,"1000")
+              ob10= Objetosinvi(550,270,"10-10")
+
+              objetos11.add(ob3)
+              objetos11.add(ob10)
+              objetos11.add(ob2)
+              objetos11.add(ob1)
 
 
               #____________________________________________________________________FIN DE MAPA 11
@@ -1180,7 +1242,13 @@ def Game(n):
 
               #___________________OBJETOS 
 
+              ob12= Objetosinvi(-1000,0,"1000")
+              ob13= Objetosinvi(800,-400,"1000")
+              ob14= Objetosinvi(1000,-0,"1000")
 
+              objetos12.add(ob14)
+              objetos12.add(ob13)
+              objetos12.add(ob12)
 
               #____________________________________________________________________FIN DE MAPA 12
 
@@ -1196,6 +1264,15 @@ def Game(n):
 
               #___________________OBJETOS 
 
+              ob1= Objetosinvi(-1000,0,"1000")
+              ob3= Objetosinvi(0,-720,"1000")
+              ob2= Objetosinvi(800,-590,"1000")
+              ob4= Objetosinvi(950,0,"1000")
+
+              objetos13.add(ob2)
+              objetos13.add(ob1)
+              objetos13.add(ob3)
+              objetos13.add(ob4)
 
 
               #____________________________________________________________________FIN DE MAPA 13
@@ -1212,11 +1289,20 @@ def Game(n):
               enemigo=Enemigo("z",8,200,400,100,100,100,1,100,100,0)
               enemigo1=Enemigo("w",2,400,400,400,300,250,1,100,100,0)
 
+
+
+
               enemigos14.add(enemigo)
               enemigos14.add(enemigo1)
 
 
-              #___________________OBJETOS 
+              #___________________OBJETOS
+
+
+              ob2= Objetosinvi(-1000,0,"1000")
+
+
+              objetos14.add(ob2)
 
               #MAPA 15___________________________________________________________INICIO DE MAPA 15
 
@@ -1232,7 +1318,25 @@ def Game(n):
               enemigos15.add(enemigo1)
 
 
+
               #___________________OBJETOS
+
+
+
+
+              ob1= Objetosinvi(-1000,0,"1000")
+              ob3= Objetosinvi(0,-750,"1000")
+              ob20= Objetosinvi(200,600,"10-10")
+              ob21= Objetosinvi(220,600,"10-10")
+              ob5= Objetosinvi(900,370,"10-10")
+
+              objetos15.add(ob5)
+              objetos15.add(ob20)
+              objetos15.add(ob21)
+              objetos15.add(ob1)
+              objetos15.add(ob3)
+
+
 
 
               #MAPA 16___________________________________________________________INICIO DE MAPA 16
@@ -1252,7 +1356,12 @@ def Game(n):
               #___________________OBJETOS
 
 
-
+              ob5= Objetosinvi(-1000,0,"1000")
+              ob6= Objetosinvi(20,390,"10-10")
+              ob7= Objetosinvi(800,350,"50-50")
+              objetos16.add(ob6)
+              objetos16.add(ob5)
+              objetos16.add(ob7)
 
 
 
@@ -1272,6 +1381,11 @@ def Game(n):
               #___________________OBJETOS
 
 
+              ob5= Objetosinvi(-1000,0,"1000")
+              ob6= Objetosinvi(0,700,"1000")
+
+              objetos17.add(ob6)
+              objetos17.add(ob5)
 
 
 
@@ -1299,16 +1413,23 @@ def Game(n):
 
 
               #___________________OBJETOS
-              #MAPA 5___________________________________________________________Fin MAPA 5
+
+
+              ob5= Objetosinvi(-0,-790,"1000")
+              ob6= Objetosinvi(0,700,"1000")
+              ob7= Objetosinvi(1000,0,"1000")
+              objetos18.add(ob7)
+              objetos18.add(ob6)
+              objetos18.add(ob5)
+
+
+              #___________________________________________________________Fin MAPA 18
+
+
+              
 
 
 
-
-
-              #FONDO INICIAL
-              fondos= pygame.sprite.Group()
-              fondo= Fondos(-330,0,1)
-              fondos.add(fondo)
 
               #INTERFAS VIDA MANA NOMBRE
               nombre_vida_mana3= pygame.sprite.Group()
@@ -1375,7 +1496,7 @@ def Game(n):
            players[username].moverabajo(socket_server,username) 
          
          if(sumatoria == 0 ):
-            players[username].Horienta()
+            players[username].Orientacion()
             
          sumatoria =0
 
@@ -1442,16 +1563,16 @@ def Game(n):
   #MAPA 2 _________________________________________________________MAPA 2 INICIO
            
       if(fondo.fondo==2):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos2,players[username],jugadores,objetos2,mapeo,nombre_vida_mana1))   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos2,players[username],jugadores,objetos1,mapeo,nombre_vida_mana1))   
       else: 
-        mapeo=AnimacionMapas.KillAnimacion(enemigos2,objetos2,mapeo,nombre_vida_mana1)
+        mapeo=AnimacionMapas.KillAnimacion(enemigos2,objetos1,mapeo,nombre_vida_mana1)
            
   #MAPA 3 _________________________________________________________MAPA 3 INICIO
     
       if(fondo.fondo==3):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos3,players[username],jugadores,objetos3,mapeo,nombre_vida_mana2))   
+        mapeo=(AnimacionMapas.Goanimacion(players,enemigos3,players[username],jugadores,objetos2,mapeo,nombre_vida_mana2))   
       else: 
-        mapeo=AnimacionMapas.KillAnimacion(enemigos3,objetos3,mapeo,nombre_vida_mana2)
+        mapeo=AnimacionMapas.KillAnimacion(enemigos3,objetos2,mapeo,nombre_vida_mana2)
 
   #MAPA 4______________________________________________________INICIO MAPA 4
       if(fondo.fondo==5):   

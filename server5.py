@@ -1,6 +1,8 @@
 import zmq
 import json
 import sys
+import random
+
 
 class Player():
 	def __init__(self,id_client,player,dic):
@@ -48,7 +50,8 @@ while True:
 			dic={"username":username,"direc":4,"posx":pos_init_x,"posy":pos_init_y,"fondo":fondo,"personaje":personaje}
 			gamer=Player(id_client,len(players)+1,dic)
 			players[username]=gamer
-			#fondo += 1
+
+			fondo = random.randint(1,18)
 			
 			print username + " Online"
 			
