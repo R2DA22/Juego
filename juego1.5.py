@@ -158,6 +158,7 @@ class Jugador(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.nombre=nombre
         self.salud=100
+        self.vidas=3
         self.vida=self.salud
         self.manatotal=100
         self.mana=self.manatotal
@@ -187,6 +188,9 @@ class Jugador(pygame.sprite.Sprite):
         self.nombreinterfas=Nombre()
         self.manainterfas=Mana()
         self.vidainterfas=Vida()
+        self.lastimar=False
+        
+
 
     def chocar(self,ob):
         self.pasos=20
@@ -194,28 +198,22 @@ class Jugador(pygame.sprite.Sprite):
             if pygame.sprite.collide_rect(self,col):              
                 if col.direc==4 and (self.direc==4 or self.direc==2 or self.direc==8):
                     self.pasos=20
-                    if(self.animacion):
-                     col.vida=col.vida-self.dano
+                   
 
                 elif col.direc==6 and (self.direc==6 or self.direc==2 or self.direc==8):
                     self.pasos=20
-                    if(self.animacion):
-                     col.vida=col.vida-self.dano
 
                 elif col.direc==8 and (self.direc==4 or self.direc==8 or self.direc==6):
                     self.pasos=20
-                    if(self.animacion):
-                     col.vida=col.vida-self.dano
 
                 elif col.direc==2 and (self.direc==4 or self.direc==2 or self.direc==6):
                     self.pasos=20
-                    if(self.animacion):
-                     col.vida=col.vida-self.dano
 
                 else:
                     self.pasos=0
-                    if(self.animacion):
-                     col.vida=col.vida-self.dano
+                if(self.lastimar):
+                     col.vida-=self.dano
+                     self.lastimar=False
            
     def chocarpbjetos(self,ob):
         activado=True
@@ -241,34 +239,45 @@ class Jugador(pygame.sprite.Sprite):
                 self.rect.y=self.y
                 self.image=self.Pj
 
-    def chocarpvp(self,ob):
+    def chocarpvp(self,socket_server,ob):
         self.pasos=20
         if(ob.nombre!=self.nombre):
             if pygame.sprite.collide_rect(self,ob):              
                     if ob.direc==4 and (self.direc==4 or self.direc==2 or self.direc==8):
                         self.pasos=20
-                        if(self.animacion):
-                         ob.vida=ob.vida-self.dano
-
+                        
+                        
                     elif ob.direc==6 and (self.direc==6 or self.direc==2 or self.direc==8):
                         self.pasos=20
-                        if(self.animacion):
-                         ob.vida=ob.vida-self.dano
+                        
 
                     elif ob.direc==8 and (self.direc==4 or self.direc==8 or self.direc==6):
                         self.pasos=20
-                        if(self.animacion):
-                         ob.vida=ob.vida-self.dano
-
+                        
                     elif ob.direc==2 and (self.direc==4 or self.direc==2 or self.direc==6):
                         self.pasos=20
-                        if(self.animacion):
-                         ob.vida=ob.vida-self.dano
-
+                        
                     else:
                         self.pasos=0
-                        if(self.animacion):
-                         ob.vida=ob.vida-self.dano
+                        
+            if(self.lastimar):
+                ob.vida-=self.dano
+                self.lastimar=False
+                if(ob.vida <= 0):
+                    print ("perdio una vida")
+                    ob.vidas-=1
+                    ob.vida=100
+                    valor=random.randint(1,18) 
+                    ob.fondo=valor
+                    self.pasos=20
+
+
+                dic={"mapa":ob.fondo,"vidas": ob.vidas,"vida": ob.vida,"username":ob.nombre}
+                socket_server.send_multipart(["dano",json.dumps(dic,sort_keys=True)])
+                        #dic={"username":ob.nombre,"vida":ob.vida}
+                        #socket_server.send_multipart(["dano",json.dumps(dic,sort_keys=True)])            
+                        
+                         
 
     def perdidavida(self):
       if(self.vida <= self.salud-10):
@@ -298,8 +307,10 @@ class Jugador(pygame.sprite.Sprite):
           self.rect.x=self.x
           self.rect.y=self.y
           self.image=self.Pj
-          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"vida":self.vida,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":"laterali","bandera":True}
+          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":"laterali"}
           socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
+          
+
          
     def moverderecha(self,socket_server,username):
           if(10>=self.i):
@@ -311,7 +322,7 @@ class Jugador(pygame.sprite.Sprite):
           self.rect.x=self.x
           self.rect.y=self.y
           self.image=self.Pj
-          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"vida":self.vida,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":"laterald","bandera":True}
+          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":"laterald"}
           socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
 
     def moverarriba(self,socket_server,username):
@@ -324,7 +335,7 @@ class Jugador(pygame.sprite.Sprite):
           self.rect.x=self.x
           self.rect.y=self.y
           self.image=self.Pj
-          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"vida":self.vida,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":"trasera","bandera":True}
+          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":"trasera"}
           socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
 
     def moverabajo(self,socket_server,username):
@@ -337,7 +348,7 @@ class Jugador(pygame.sprite.Sprite):
           self.rect.x=self.x
           self.rect.y=self.y
           self.image=self.Pj
-          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"vida":self.vida,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":"frontal","bandera":True}
+          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":"frontal"}
           socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
 
 
@@ -374,7 +385,7 @@ class Jugador(pygame.sprite.Sprite):
          self.rect.x=self.x
          self.rect.y=self.y
          self.image=self.Pj
-         #dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":0,"vida":self.vida,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":carpeta,"bandera":True}         
+         #dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":0,"vida":self.vida,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":carpeta}         
          #socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
 
     def interfase(self):
@@ -388,7 +399,6 @@ class Jugador(pygame.sprite.Sprite):
          return propiedades
         
     def anima(self,ani):
-        self.animacion=True
         if(self.direc==8):
             if(self.direc==8 and self.iy<=10):
                 self.Pj= pygame.image.load("Animaciones/"+str(ani)+"/trasero/"+str(self.iy)+".png")
@@ -396,6 +406,7 @@ class Jugador(pygame.sprite.Sprite):
             else:
              self.iy=1
              self.animacion=False
+             self.lastimar=True
 
         if(self.direc==2):
             if(self.direc==2 and self.iy<=10):
@@ -404,6 +415,7 @@ class Jugador(pygame.sprite.Sprite):
             else:
                 self.iy=1
                 self.animacion=False
+                self.lastimar=True
 
         if(self.direc==4 ):
             if(self.direc==4 and self.iy<=10):
@@ -412,6 +424,7 @@ class Jugador(pygame.sprite.Sprite):
             else:
                 self.iy=1
                 self.animacion=False
+                self.lastimar=True
 
         if(self.direc==6 ):
             if(self.direc==6 and self.iy<=10):
@@ -420,9 +433,11 @@ class Jugador(pygame.sprite.Sprite):
             else:
                 self.iy=1
                 self.animacion=False
+                self.lastimar=True
         self.rect.x=self.x
         self.rect.y=self.y
         self.image=self.Pj
+        
 
 class Enemigo(pygame.sprite.Sprite):
     def __init__(self,nombre,direc,x,y,cx,cy,peligro,dano,vida,mana,personaje):
@@ -704,7 +719,7 @@ class AnimacionMapa (pygame.sprite.Sprite):
 
 
         
-    def Goanimacion(self,players,enemigos,jugador,jugadores,objetos,retornar,nombre_vida_mana):
+    def Goanimacion(self,socket_server,fondo,players,enemigos,jugador,jugadores,objetos,retornar,nombre_vida_mana):
         
        #CARGAR ELEMENTOS DEL MAPA EN CUESTION
         retornar.add(objetos)     
@@ -756,12 +771,15 @@ class AnimacionMapa (pygame.sprite.Sprite):
                 col.rutina()
                 col.ataca=False"""
 
-        #COLICION JUGADORES CON ENEMIGOS
+        #COLICION JUGADORES
         for col in jugadores:
-            if col.nombre != jugador.nombre:
-               jugador.chocarpvp(col)   
+            #if col.nombre != jugador.nombre:
+            jugador.chocarpvp(socket_server,col)
+
         #COLICION JUGADORES CON OBJETOS
         jugador.chocarpbjetos(objetos)
+        
+        
          
 
         return retornar
@@ -780,7 +798,7 @@ def manejo_mapas(fondo,player,x,y,fondo_aux,socket_server):
     fondo.fondo=fondo_aux
     if(player.muestramapa):
         fondo.Cambiominimapa(-330,0,player.fondo)
-    dic={"mapa":fondo_aux,"username":player.nombre,"bandera":False}
+    dic={"mapa":fondo_aux,"username":player.nombre}
     socket_server.send_multipart(["mapeo",json.dumps(dic,sort_keys=True)])
 
 def Metamorfosis(players,player,personaje,dano,gastarmana,username):
@@ -789,8 +807,8 @@ def Metamorfosis(players,player,personaje,dano,gastarmana,username):
     players[username].gastarmana =gastarmana  
 
 
-def from_server(action,player,username,dic1): 
-	if  dic1["bandera"]:
+def from_server(action,player,username,dic1,fondo): 
+	if action=="move":
 		if player.nombre != username:
 			if(dic1["i"] <= 10):  
 				player.i=dic1["i"]
@@ -803,14 +821,26 @@ def from_server(action,player,username,dic1):
 			player.y=dic1["posy"]
 			player.direc=dic1["direc"]
 			player.dano=dic1["dano"]
-			player.vida=dic1["vida"]
 			player.gastarmana=dic1["gastarmana"]
 			player.personaje=dic1["personaje"]
 			player.image=player.Pj
-			if action == "golpe":
-				player.anima(player.personaje)
-	else:
+	if action == "golpe":
+		player.anima(player.personaje)
+	if action=="mapeo":
 		player.fondo=dic1["mapa"]
+	#if action=="dano":
+	#	player.vida=dic1["vida"]
+	if action  == "dano":
+		
+		player.vida=dic1["vida"]
+		player.vidas=dic1["vidas"]
+		player.fondo=dic1["mapa"]
+
+		if player.nombre==username:
+			
+			fondo.Cambiomapa(-330,0,dic1["mapa"])
+			fondo.fondo=dic1["mapa"]
+			
 
 
 
@@ -827,7 +857,7 @@ def Game(n):
   #____________________________________________________________Establecer conexion con el servidor
   ctx = zmq.Context()
   socket_server = ctx.socket(zmq.XREQ)
-  socket_server.connect('tcp://localhost:5555')
+  socket_server.connect('tcp://'+sys.argv[2]+':5555')
 
   msg="connect"
   username=sys.argv[1]
@@ -1457,17 +1487,15 @@ def Game(n):
               sumatoria =0
               perdimana =0
           
-      if action== "move" or action=="mapeo"  or action=="golpe":#or action=="morphing":
+      else:
             number_players =int(socket_server.recv())
-          #while j < number_players:
             dic1 =json.loads(socket_server.recv())
             id_player = dic1["username"]
-            from_server(action,players[id_player],username,dic1)
-           # j+=1
+            from_server(action,players[id_player],username,dic1,fondo)
 
 
     if init:
-
+      
       for event in pygame.event.get():
       	
          tecla= pygame.key.get_pressed()
@@ -1501,19 +1529,8 @@ def Game(n):
          sumatoria =0
 
          if tecla[K_SPACE] :
-         
-           q=players[username]
-           q.anima(q.personaje)
-           if q.direc==4:
-             carpeta="laterali"
-           if q.direc==6:
-             carpeta="laterald"
-           if q.direc==8:
-             carpeta="trasera"
-           if q.direc==2:
-             carpeta="frontal"
-           dic={"username":username,"posx":q.rect.x,"posy":q.rect.y,"direc":q.direc,"i":q.i,"vida":q.vida,"personaje":q.personaje,"dano":q.dano,"gastarmana":q.gastarmana,"carpeta":carpeta,"bandera":True}
-           socket_server.send_multipart(["golpe",json.dumps(dic,sort_keys=True)])
+           q.animacion=True
+           
 
          if tecla[K_z] :
             if(players[username].personaje ==players[username].copia and players[username].mana>0): 
@@ -1530,14 +1547,26 @@ def Game(n):
            fondo.Cambiomapa(-330,0,players[username].fondo)
            players[username].muestramapa=False 
         
-    #FUNCIONES PERSONAJE PRINCIPAL FIN 
-        
-  #ANIMACIONES PERSONAJE PRINCIPAL INICIO 
+    #FUNCIONES PERSONAJE PRINCIPAL FIN
+    #ANIMACIONES PERSONAJE PRINCIPAL INICIO
+      q=players[username]
+      if(q.animacion):
+           q.anima(q.personaje)
+           if q.direc==4:
+             carpeta="laterali"
+           if q.direc==6:
+             carpeta="laterald"
+           if q.direc==8:
+             carpeta="trasera"
+           if q.direc==2:
+             carpeta="frontal"
+           dic={"username":username}
+           socket_server.send_multipart(["golpe",json.dumps(dic,sort_keys=True)])
+       
       for p in jugadores:
        nombre_vida_manajugador.update(p.interfase())
        mapeo.update(nombre_vida_manajugador)
-       if(p.animacion):
-        p.anima(p.personaje)
+
        
        if(perdimana>10 and p.gastarmana):
         p.mana-=1
@@ -1545,7 +1574,8 @@ def Game(n):
 
        if(p.mana<=0):
         p.personaje=p.copia
-        p.gastarmana=False      
+        p.gastarmana=False 
+        p.dano-=5     
 
       perdimana+=1
 
@@ -1556,47 +1586,47 @@ def Game(n):
 
      #MAPA 1 INICIO______________________________________________________MAPA 1 INICIO
       if(fondo.fondo==1):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos,players[username],jugadores,objetos,mapeo,nombre_vida_mana)) 
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos,players[username],jugadores,objetos,mapeo,nombre_vida_mana)) 
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos,objetos,mapeo,nombre_vida_mana)
 
   #MAPA 2 _________________________________________________________MAPA 2 INICIO
            
       if(fondo.fondo==2):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos2,players[username],jugadores,objetos1,mapeo,nombre_vida_mana1))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos2,players[username],jugadores,objetos1,mapeo,nombre_vida_mana1))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos2,objetos1,mapeo,nombre_vida_mana1)
            
   #MAPA 3 _________________________________________________________MAPA 3 INICIO
     
       if(fondo.fondo==3):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos3,players[username],jugadores,objetos2,mapeo,nombre_vida_mana2))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos3,players[username],jugadores,objetos2,mapeo,nombre_vida_mana2))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos3,objetos2,mapeo,nombre_vida_mana2)
 
   #MAPA 4______________________________________________________INICIO MAPA 4
       if(fondo.fondo==5):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos4,players[username],jugadores,objetos4,mapeo,nombre_vida_mana3))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos4,players[username],jugadores,objetos4,mapeo,nombre_vida_mana3))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos4,objetos4,mapeo,nombre_vida_mana3)     
 
   #MAPA 5______________________________________________________INICIO MAPA 5
 
       if(fondo.fondo==4):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos5,players[username],jugadores,objetos5,mapeo,nombre_vida_mana4))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos5,players[username],jugadores,objetos5,mapeo,nombre_vida_mana4))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos5,objetos5,mapeo,nombre_vida_mana4)
     #INICIO MAPA 6______________________________________________________INICIO MAPA 6
 
       if(fondo.fondo==6):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos6,players[username],jugadores,objetos6,mapeo,nombre_vida_mana6))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos6,players[username],jugadores,objetos6,mapeo,nombre_vida_mana6))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos6,objetos6,mapeo,nombre_vida_mana6)  
 
 #INICIO MAPA 7______________________________________________________INICIO MAPA 7
 
       if(fondo.fondo==7):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos7,players[username],jugadores,objetos7,mapeo,nombre_vida_mana7))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos7,players[username],jugadores,objetos7,mapeo,nombre_vida_mana7))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos7,objetos7,mapeo,nombre_vida_mana7)  
 
@@ -1604,7 +1634,7 @@ def Game(n):
 #INICIO MAPA 8______________________________________________________INICIO MAPA 8
 
       if(fondo.fondo==8):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos8,players[username],jugadores,objetos8,mapeo,nombre_vida_mana8))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos8,players[username],jugadores,objetos8,mapeo,nombre_vida_mana8))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos8,objetos8,mapeo,nombre_vida_mana8)  
 
@@ -1612,28 +1642,28 @@ def Game(n):
 #INICIO MAPA 9______________________________________________________INICIO MAPA 9
 
       if(fondo.fondo==9):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos9,players[username],jugadores,objetos9,mapeo,nombre_vida_mana9))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos9,players[username],jugadores,objetos9,mapeo,nombre_vida_mana9))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos9,objetos9,mapeo,nombre_vida_mana9)  
 
 #INICIO MAPA 10______________________________________________________INICIO MAPA 10
 
       if(fondo.fondo==10):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos10,players[username],jugadores,objetos10,mapeo,nombre_vida_mana10))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos10,players[username],jugadores,objetos10,mapeo,nombre_vida_mana10))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos10,objetos10,mapeo,nombre_vida_mana10)  
 
 #INICIO MAPA 11______________________________________________________INICIO MAPA 11
 
       if(fondo.fondo==11):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos11,players[username],jugadores,objetos11,mapeo,nombre_vida_mana11))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos11,players[username],jugadores,objetos11,mapeo,nombre_vida_mana11))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos11,objetos11,mapeo,nombre_vida_mana11)  
 
 #INICIO MAPA 12______________________________________________________INICIO MAPA 12
 
       if(fondo.fondo==12):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos12,players[username],jugadores,objetos12,mapeo,nombre_vida_mana12))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos12,players[username],jugadores,objetos12,mapeo,nombre_vida_mana12))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos12,objetos12,mapeo,nombre_vida_mana12)  
 
@@ -1641,7 +1671,7 @@ def Game(n):
 #INICIO MAPA 13______________________________________________________INICIO MAPA 13
 
       if(fondo.fondo==13):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos13,players[username],jugadores,objetos13,mapeo,nombre_vida_mana13))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos13,players[username],jugadores,objetos13,mapeo,nombre_vida_mana13))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos13,objetos13,mapeo,nombre_vida_mana13)
 
@@ -1649,7 +1679,7 @@ def Game(n):
 #INICIO MAPA 14______________________________________________________INICIO MAPA 14
 
       if(fondo.fondo==14):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos14,players[username],jugadores,objetos14,mapeo,nombre_vida_mana14))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos14,players[username],jugadores,objetos14,mapeo,nombre_vida_mana14))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos14,objetos14,mapeo,nombre_vida_mana14)
 
@@ -1657,21 +1687,21 @@ def Game(n):
 #INICIO MAPA 15______________________________________________________INICIO MAPA 15
 
       if(fondo.fondo==15):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos15,players[username],jugadores,objetos15,mapeo,nombre_vida_mana15))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos15,players[username],jugadores,objetos15,mapeo,nombre_vida_mana15))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos15,objetos15,mapeo,nombre_vida_mana15)
 
 #INICIO MAPA 16______________________________________________________INICIO MAPA 16
 
       if(fondo.fondo==16):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos16,players[username],jugadores,objetos16,mapeo,nombre_vida_mana16))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos16,players[username],jugadores,objetos16,mapeo,nombre_vida_mana16))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos16,objetos16,mapeo,nombre_vida_mana16)
 
 #INICIO MAPA 17______________________________________________________INICIO MAPA 17
 
       if(fondo.fondo==17):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos17,players[username],jugadores,objetos17,mapeo,nombre_vida_mana17))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos17,players[username],jugadores,objetos17,mapeo,nombre_vida_mana17))   
       else: 
         mapeo=AnimacionMapas.KillAnimacion(enemigos17,objetos17,mapeo,nombre_vida_mana17)
 
@@ -1679,10 +1709,11 @@ def Game(n):
 #INICIO MAPA 18______________________________________________________INICIO MAPA 17
 
       if(fondo.fondo==18):   
-        mapeo=(AnimacionMapas.Goanimacion(players,enemigos18,players[username],jugadores,objetos18,mapeo,nombre_vida_mana18))   
+        mapeo=(AnimacionMapas.Goanimacion(socket_server,fondo,players,enemigos18,players[username],jugadores,objetos18,mapeo,nombre_vida_mana18))   
       else: 
-        mapeo=AnimacionMapas.KillAnimacion(enemigos18,objetos18,mapeo,nombre_vida_mana18)    
-        
+        mapeo=AnimacionMapas.KillAnimacion(enemigos18,objetos18,mapeo,nombre_vida_mana18)
+
+      
            
 #INICIO MANEJO DE MAPAS _______________________________________________________________
       p=players[username]
@@ -1883,7 +1914,7 @@ def Game(n):
             
 
 
-        for iterador,p in players.iteritems():
+        for p in players.values():
             if p.fondo != fondo.fondo:
                 mapeo.remove(p)
                 mapeo.remove(p.interfase())
