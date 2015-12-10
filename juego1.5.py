@@ -240,8 +240,7 @@ class Jugador(pygame.sprite.Sprite):
                 self.image=self.Pj
 
     def chocarpvp(self,socket_server,ob):
-        self.pasos=20
-        if(ob.nombre!=self.nombre):
+    	    #self.pasos=20
             if pygame.sprite.collide_rect(self,ob):              
                     if ob.direc==4 and (self.direc==4 or self.direc==2 or self.direc==8):
                         self.pasos=20
@@ -260,23 +259,39 @@ class Jugador(pygame.sprite.Sprite):
                     else:
                         self.pasos=0
                         
-            if(self.lastimar):
-                ob.vida-=self.dano
-                self.lastimar=False
-                if(ob.vida <= 0):
-                    print ("perdio una vida")
-                    ob.vidas-=1
-                    ob.vida=100
-                    valor=random.randint(1,18) 
-                    ob.fondo=valor
-                    self.pasos=20
+                    if(self.lastimar):
+                        ob.vida-=self.dano
+                        self.lastimar=False
+                        if(ob.vida <= 0):
+                            print ("perdio una vida")
+                            ob.vidas-=1
+                            ob.vida=100
+                            valor=random.randint(1,18) 
+                            ob.fondo=valor
+                            action="dead"
+                        else:
+                        	action="dano"
 
 
-                dic={"mapa":ob.fondo,"vidas": ob.vidas,"vida": ob.vida,"username":ob.nombre}
-                socket_server.send_multipart(["dano",json.dumps(dic,sort_keys=True)])
+                        dic={"mapa":ob.fondo,"vidas": ob.vidas,"vida": ob.vida,"username":ob.nombre}
+                        socket_server.send_multipart([action,json.dumps(dic,sort_keys=True)])
+
+            else:
+            	self.lastimar=False
                         #dic={"username":ob.nombre,"vida":ob.vida}
-                        #socket_server.send_multipart(["dano",json.dumps(dic,sort_keys=True)])            
-                        
+                        #socket_server.send_multipart(["dano",json.dumps(dic,sort_keys=True)])    
+
+    def transformar(self):
+        self.personaje=4
+        self.dano+=5
+        self.gastarmana =True 
+        
+
+    def destransformar(self):
+        self.personaje=self.copia
+        self.dano-=5
+        self.gastarmana =False 
+                   
                          
 
     def perdidavida(self):
@@ -307,7 +322,7 @@ class Jugador(pygame.sprite.Sprite):
           self.rect.x=self.x
           self.rect.y=self.y
           self.image=self.Pj
-          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":"laterali"}
+          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"personaje":self.personaje,"carpeta":"laterali"}
           socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
           
 
@@ -322,7 +337,7 @@ class Jugador(pygame.sprite.Sprite):
           self.rect.x=self.x
           self.rect.y=self.y
           self.image=self.Pj
-          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":"laterald"}
+          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"personaje":self.personaje,"carpeta":"laterald"}
           socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
 
     def moverarriba(self,socket_server,username):
@@ -335,7 +350,7 @@ class Jugador(pygame.sprite.Sprite):
           self.rect.x=self.x
           self.rect.y=self.y
           self.image=self.Pj
-          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":"trasera"}
+          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"personaje":self.personaje,"carpeta":"trasera"}
           socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
 
     def moverabajo(self,socket_server,username):
@@ -348,7 +363,7 @@ class Jugador(pygame.sprite.Sprite):
           self.rect.x=self.x
           self.rect.y=self.y
           self.image=self.Pj
-          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"personaje":self.personaje,"dano":self.dano,"gastarmana":self.gastarmana,"carpeta":"frontal"}
+          dic={"username":username,"posx":self.rect.x,"posy":self.rect.y,"direc":self.direc,"i":self.i,"personaje":self.personaje,"carpeta":"frontal"}
           socket_server.send_multipart(["move",json.dumps(dic,sort_keys=True)])
 
 
@@ -772,9 +787,12 @@ class AnimacionMapa (pygame.sprite.Sprite):
                 col.ataca=False"""
 
         #COLICION JUGADORES
+        jugador.pasos=20
         for col in jugadores:
-            #if col.nombre != jugador.nombre:
-            jugador.chocarpvp(socket_server,col)
+            if col.nombre != jugador.nombre:
+                jugador.chocarpvp(socket_server,col)
+
+
 
         #COLICION JUGADORES CON OBJETOS
         jugador.chocarpbjetos(objetos)
@@ -801,10 +819,6 @@ def manejo_mapas(fondo,player,x,y,fondo_aux,socket_server):
     dic={"mapa":fondo_aux,"username":player.nombre}
     socket_server.send_multipart(["mapeo",json.dumps(dic,sort_keys=True)])
 
-def Metamorfosis(players,player,personaje,dano,gastarmana,username):
-    players[username].personaje=personaje
-    players[username].dano=dano
-    players[username].gastarmana =gastarmana  
 
 
 def from_server(action,player,username,dic1,fondo): 
@@ -820,8 +834,6 @@ def from_server(action,player,username,dic1,fondo):
 			player.x=dic1["posx"]
 			player.y=dic1["posy"]
 			player.direc=dic1["direc"]
-			player.dano=dic1["dano"]
-			player.gastarmana=dic1["gastarmana"]
 			player.personaje=dic1["personaje"]
 			player.image=player.Pj
 	if action == "golpe":
@@ -830,17 +842,19 @@ def from_server(action,player,username,dic1,fondo):
 		player.fondo=dic1["mapa"]
 	#if action=="dano":
 	#	player.vida=dic1["vida"]
-	if action  == "dano":
+	if action  == "dano" or action=="dead":
 		
 		player.vida=dic1["vida"]
 		player.vidas=dic1["vidas"]
 		player.fondo=dic1["mapa"]
-
 		if player.nombre==username:
-			
 			fondo.Cambiomapa(-330,0,dic1["mapa"])
 			fondo.fondo=dic1["mapa"]
-			
+	if action == "transformar":
+		if dic1["morph"]:
+			player.transformar()
+		else:
+			player.destransformar()
 
 
 
@@ -891,6 +905,8 @@ def Game(n):
     if socket_server in socks and socks[socket_server] == zmq.POLLIN:
       j=0
       action=socket_server.recv()
+      
+     
       if action=="connect":
           number_players=int(json.loads(socket_server.recv()))
           while j<number_players:
@@ -1486,12 +1502,20 @@ def Game(n):
               #pygame.mixer.music.play(-1)
               sumatoria =0
               perdimana =0
-          
-      else:
-            number_players =int(socket_server.recv())
-            dic1 =json.loads(socket_server.recv())
-            id_player = dic1["username"]
-            from_server(action,players[id_player],username,dic1,fondo)
+      if action == "disconnect":
+             number_players=int(json.loads(socket_server.recv()))
+             dic=json.loads(socket_server.recv())
+             p=players[dic["username"]]
+             del players[dic["username"]]
+             mapeo.remove(p)
+             mapeo.remove(p.interfase())
+             nombre_vida_manajugador.remove(p.interfase())
+             jugadores.remove(p)  
+      if action=="move" or action=="golpe" or action =="mapeo" or action == "dano" or action=="dead" or action=="transformar":
+            number_players=int(json.loads(socket_server.recv()))
+            dic=json.loads(socket_server.recv())
+            id_player = dic["username"]
+            from_server(action,players[id_player],username,dic,fondo)
 
 
     if init:
@@ -1507,6 +1531,7 @@ def Game(n):
          #FUNCIONES PERSONAJE PRINCIPAL INICIO   
          if tecla[K_ESCAPE]:
            terminar = True
+           socket_server.send_multipart(["disconnect",username])
             
          for i in tecla:
            sumatoria =sumatoria+i
@@ -1533,11 +1558,15 @@ def Game(n):
            
 
          if tecla[K_z] :
-            if(players[username].personaje ==players[username].copia and players[username].mana>0): 
-               Metamorfosis(players,players[username],4,players[username].dano+5,True,username)
+            if(players[username].personaje == players[username].copia and players[username].mana>0): 
+               players[username].transformar()
+               dic={"username":players[username].nombre,"morph":True}
+               socket_server.send_multipart(["transformar",json.dumps(dic,sort_keys=True)]) 
          if tecla[K_x]:
             if(players[username].personaje!=players[username].copia):
-               Metamorfosis(players,players[username],players[username].copia,players[username].dano-5,False,username)
+               players[username].destransformar()
+               dic={"username":players[username].nombre,"morph":False}
+               socket_server.send_multipart(["transformar",json.dumps(dic,sort_keys=True)]) 
 
          if tecla[K_m]:
            fondo.Cambiominimapa(-330,0,players[username].fondo)

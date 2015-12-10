@@ -5,9 +5,8 @@ import random
 
 
 class Player():
-	def __init__(self,id_client,player,dic):
+	def __init__(self,id_client,dic):
 		self.id_client=id_client
-		self.player="player"+str(player)
 	 	self.dic=dic
 	 	self.Online=False
 	
@@ -19,6 +18,7 @@ def multicast(socket_clients,id_client,players,action,dic,n):
 	for addres in players.values():
 		if id_client != addres.id_client:
 			socket_clients.send_multipart([addres.id_client,action,json.dumps(n,sort_keys=True),json.dumps(dic,sort_keys=True)])
+			
 			
 
 
@@ -39,7 +39,7 @@ poller = zmq.Poller()
 poller.register(socket_clients, zmq.POLLIN)
 n_online=0
 while True:
-
+	
 	socks = dict(poller.poll())
 	if socket_clients in socks and socks[socket_clients] == zmq.POLLIN:
 		id_client=socket_clients.recv()
@@ -49,12 +49,12 @@ while True:
 			username=socket_clients.recv()
 			personaje=json.loads(socket_clients.recv())
 			dic={"username":username,"direc":4,"posx":pos_init_x,"posy":pos_init_y,"fondo":fondo,"personaje":personaje}
-			gamer=Player(id_client,len(players)+1,dic)
+			gamer=Player(id_client,dic)
 			players[username]=gamer
 
 			#fondo = random.randint(1,18)
 			
-			print username + " Online"
+			print username + " En line"
 			
 			for addres in players.values():	
 					if addres.Online:
@@ -74,7 +74,15 @@ while True:
 
 			players[username].Online=True
 			n_online+=1
-		else:
+		if action == "disconnect":
+		
+			username=socket_clients.recv()
+			del players[username]
+			print username + " se Desconecto"
+			multicast(socket_clients,id_client,players,action,{"username":username},len(players))
+			n_online-=1
+
+		if action=="move" or action=="golpe" or action =="mapeo" or action == "dano" or action=="dead" or action=="transformar":
 			dic1=json.loads(socket_clients.recv())
 			nombre=dic1["username"]
 			if action=="move":
@@ -82,12 +90,8 @@ while True:
 				players[nombre].dic["posx"]=dic1["posx"]
 				players[nombre].dic["posy"]=dic1["posy"]
 				players[nombre].dic["personaje"]=dic1["personaje"]
-			if action=="mapeo":
+			if action=="mapeo" or action=="dead":
 				players[nombre].dic["fondo"]=dic1["mapa"]
-			multicast(socket_clients,id_client,players,action,dic1,len(players)-1)		
-		
-		#if action == "morphing":
-		#	dic4=json.loads(socket_clients.recv())
-		#	multicast(socket_clients,players,action,dic4)	
+			multicast(socket_clients,id_client,players,action,dic1,len(players)-1)
 			
     
