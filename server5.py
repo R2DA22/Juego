@@ -9,8 +9,6 @@ class Player():
 		self.id_client=id_client
 	 	self.dic=dic
 	 	self.Online=False
-	
-
 
 
 def multicast(socket_clients,id_client,players,action,dic,n):
@@ -19,13 +17,6 @@ def multicast(socket_clients,id_client,players,action,dic,n):
 		if id_client != addres.id_client:
 			socket_clients.send_multipart([addres.id_client,action,json.dumps(n,sort_keys=True),json.dumps(dic,sort_keys=True)])
 			
-			
-
-
-
-
-
-
 pos_init_x=600
 pos_init_y=100
 ctx = zmq.Context()

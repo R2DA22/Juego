@@ -277,9 +277,7 @@ class Jugador(pygame.sprite.Sprite):
                         socket_server.send_multipart([action,json.dumps(dic,sort_keys=True)])
 
             else:
-            	self.lastimar=False
-                        #dic={"username":ob.nombre,"vida":ob.vida}
-                        #socket_server.send_multipart(["dano",json.dumps(dic,sort_keys=True)])    
+            	self.lastimar=False 
 
     def transformar(self):
         self.personaje=4
@@ -840,8 +838,6 @@ def from_server(action,player,username,dic1,fondo):
 		player.anima(player.personaje)
 	if action=="mapeo":
 		player.fondo=dic1["mapa"]
-	#if action=="dano":
-	#	player.vida=dic1["vida"]
 	if action  == "dano" or action=="dead":
 		
 		player.vida=dic1["vida"]
