@@ -13,12 +13,12 @@
 
 ## Modo de ejecucion
 
-1. Ejecutar servidor con el numero de jugadores que se van a conectar (el servidor esperara todos los clientes antes de iniciar el juego):
+1. Ejecutar servidor:
     
-        python server5.py  2
-2. Ejecutar Juego con un nombre de usuario cualquiera (no se pueden repetir nombres de usuario):
+        python server5.py
+2. Ejecutar Juego:
     
-        python Juego1.5.py username
+        python Juego1.5.py [nombre del jugador] [direccion Ip del servidor]
 
 # Problemas
 
